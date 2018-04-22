@@ -39,6 +39,8 @@ class ChocolatesOfTheWorldViewController: UIViewController {
     
     setupCartObserver()
     setupCellConfiguration()
+    setupCellTapHandling()
+    
   }
   
   //MARK: Rx Setup
@@ -62,6 +64,21 @@ class ChocolatesOfTheWorldViewController: UIViewController {
               }
       .disposed(by: disposeBag)
   }
+  
+  private func setupCellTapHandling() {
+    tableView
+    .rx
+    .modelSelected(Chocolate.self)
+      .subscribe(onNext: {
+        chocolate in
+        ShoppingCart.sharedCart.chocolates.value.append(chocolate)
+        if let selectedIndexPath = self.tableView.indexPathForSelectedRow {
+          self.tableView.deselectRow(at: selectedIndexPath, animated: true)
+        }
+      })
+      .disposed(by: disposeBag)
+  }
+  
 }
 
 // MARK: - SegueHandler
